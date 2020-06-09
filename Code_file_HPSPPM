@@ -1,0 +1,142 @@
+
+#House Selling Price Regression Model:
+
+
+#Importing the Datasets:
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#Importing the Datasets:
+df_train = pd.read_csv('train.csv')
+df_test  = pd.read_csv('test.csv')
+#print(df_test.info())
+
+#Data Cleaning & Feature Engineering:
+
+#Feature Dropping Part:
+df_train = df_train.drop(labels = ['Street', 'Alley','LotShape','LandContour','Utilities','LotConfig','LandSlope','Neighborhood','Condition1','Condition2','BldgType','HouseStyle' ], axis = 1)
+df_train = df_train.drop(labels = ['Exterior1st','Exterior2nd','MasVnrType','Electrical'], axis = 1)
+df_train = df_train.drop(labels = ['BsmtExposure','BsmtFinType1','BsmtFinType2','BsmtFinSF1','BsmtFinSF2'], axis = 1)
+df_train = df_train.drop(labels = ['HeatingQC','Heating','Functional','PoolQC','Fence','MiscFeature'], axis = 1)
+df_train = df_train.drop(labels = ['MSZoning','KitchenQual','SaleType'], axis = 1)
+
+
+#Feature Dropping Part:
+df_test = df_test.drop(labels = ['Street', 'Alley','LotShape','LandContour','Utilities','LotConfig','LandSlope','Neighborhood','Condition1','Condition2','BldgType','HouseStyle' ], axis = 1)
+df_test = df_test.drop(labels = ['Exterior1st','Exterior2nd','MasVnrType','Electrical'], axis = 1)
+df_test = df_test.drop(labels = ['BsmtExposure','BsmtFinType1','BsmtFinType2','BsmtFinSF1','BsmtFinSF2'], axis = 1)
+df_test = df_test.drop(labels = ['HeatingQC','Heating','Functional','PoolQC','Fence','MiscFeature'], axis = 1)
+df_test = df_test.drop(labels = ['MSZoning','KitchenQual','SaleType'], axis = 1)
+
+
+#Replacing the Values of Coumn with Median:
+df_train['LotFrontage'] = df_train['LotFrontage'].fillna((df_train['LotFrontage'].median()))
+df_train['GarageYrBlt'] = df_train['GarageYrBlt'].fillna((df_train['GarageYrBlt'].median()))
+df_train['MasVnrArea'] = df_train['MasVnrArea'].fillna((df_train['MasVnrArea'].median()))
+
+#Replacing the Values of Coumn with Median:
+df_test['LotFrontage'] = df_test['LotFrontage'].fillna((df_test['LotFrontage'].median()))
+df_test['GarageYrBlt'] = df_test['GarageYrBlt'].fillna((df_test['GarageYrBlt'].median()))
+df_test['MasVnrArea'] = df_test['MasVnrArea'].fillna((df_test['MasVnrArea'].median()))
+
+#Replacing the Values with Unknown values:
+df_train['BsmtCond'] = df_train['BsmtCond'].fillna('Unknown')
+df_train['BsmtQual'] = df_train['BsmtQual'].fillna('Unknown') 
+df_train['FireplaceQu'] = df_train['FireplaceQu'].fillna('Unknown')
+df_train['GarageType'] = df_train['GarageType'].fillna('Unknown')
+df_train['GarageFinish'] = df_train['GarageFinish'].fillna('Unknown')
+df_train['GarageQual'] = df_train['GarageQual'].fillna('Unknown')
+df_train['GarageCond'] = df_train['GarageCond'].fillna('Unknown')
+
+
+#Replacing the Values with Unknown values:
+df_test['BsmtCond'] = df_test['BsmtCond'].fillna('Unknown')
+df_test['BsmtQual'] = df_test['BsmtQual'].fillna('Unknown') 
+df_test['FireplaceQu'] = df_test['FireplaceQu'].fillna('Unknown')
+df_test['GarageType'] = df_test['GarageType'].fillna('Unknown')
+df_test['GarageFinish'] = df_test['GarageFinish'].fillna('Unknown')
+df_test['GarageQual'] = df_test['GarageQual'].fillna('Unknown')
+df_test['GarageCond'] = df_test['GarageCond'].fillna('Unknown')
+
+#Replacing the nan with 0:
+df_test['BsmtFullBath'] = df_test['BsmtFullBath'].fillna(0)
+df_test['BsmtHalfBath'] = df_test['BsmtHalfBath'].fillna(0)
+df_test['GarageCars'] = df_test['GarageCars'].fillna(0)
+df_test['GarageArea'] = df_test['GarageArea'].fillna(0)
+df_test['BsmtUnfSF'] = df_test['BsmtUnfSF'].fillna(0)
+df_test['TotalBsmtSF'] = df_test['TotalBsmtSF'].fillna(0)
+
+#print(df_test.info())
+
+
+#Defining x & y:
+x = df_train.iloc[:,1:-1].values
+y = df_train.iloc[:, -1].values
+x_test = df_test.iloc[:,1:].values
+
+#Encoding categorical Classification:
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+le = LabelEncoder()
+
+x[ : ,7] = le.fit_transform(x[ : ,7])
+x[ : ,8] = le.fit_transform(x[ : ,8])
+x[ : ,10] = le.fit_transform(x[ : ,10])
+x[ : ,11] = le.fit_transform(x[ : ,11])
+x[ : ,12] = le.fit_transform(x[ : ,12])
+x[ : ,13] = le.fit_transform(x[ : ,13])
+x[ : ,14] = le.fit_transform(x[ : ,14])
+x[ : ,17] = le.fit_transform(x[ : ,17])
+x[ : ,30] = le.fit_transform(x[ : ,30])
+x[ : ,31] = le.fit_transform(x[ : ,31])
+x[ : ,33] = le.fit_transform(x[ : ,33])
+x[ : ,36] = le.fit_transform(x[ : ,36])
+x[ : ,37] = le.fit_transform(x[ : ,37])
+x[ : ,38] = le.fit_transform(x[ : ,38])
+x[ : ,48] = le.fit_transform(x[ : ,48])
+
+
+x_test[ : ,7] = le.fit_transform(x_test[ : ,7])
+x_test[ : ,8] = le.fit_transform(x_test[ : ,8])
+x_test[ : ,10] = le.fit_transform(x_test[ : ,10])
+x_test[ : ,11] = le.fit_transform(x_test[ : ,11])
+x_test[ : ,12] = le.fit_transform(x_test[ : ,12])
+x_test[ : ,13] = le.fit_transform(x_test[ : ,13])
+x_test[ : ,14] = le.fit_transform(x_test[ : ,14])
+x_test[ : ,17] = le.fit_transform(x_test[ : ,17])
+x_test[ : ,30] = le.fit_transform(x_test[ : ,30])
+x_test[ : ,31] = le.fit_transform(x_test[ : ,31])
+x_test[ : ,33] = le.fit_transform(x_test[ : ,33])
+x_test[ : ,36] = le.fit_transform(x_test[ : ,36])
+x_test[ : ,37] = le.fit_transform(x_test[ : ,37])
+x_test[ : ,38] = le.fit_transform(x_test[ : ,38])
+x_test[ : ,48] = le.fit_transform(x_test[ : ,48])
+
+
+#Feature Scaling of data:
+from sklearn.preprocessing import StandardScaler
+sc = StandardScaler()
+x = sc.fit_transform(x)
+x_test = sc.fit_transform(x_test)
+y = sc.fit_transform(y.reshape(-1,1))
+"""
+#Training of the SVR  Model:
+from sklearn.svm import SVR
+regressor = SVR(kernel = 'rbf')
+regressor.fit(x,y)
+"""
+
+#Training of the Random Forest  Model:
+from sklearn.ensemble import RandomForestRegressor
+regressor = RandomForestRegressor(n_estimators = 500, criterion = 'mae')
+regressor.fit(x,y)
+
+
+
+#Predicting the Outcomes:
+y_pred = regressor.predict(x_test)
+y_pred = sc.inverse_transform(y_pred.reshape(-1,1))
+
+#Visualizing the Proce Reuslt:
+plt.plot(range(0,50), y_pred[0:50,])
